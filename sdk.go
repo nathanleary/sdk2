@@ -33,14 +33,48 @@ type dukValue struct {
 
 func Run(duk *duktape.Context, input string) (dukValue, error) {
 
-	//	indexStart := 0
+	indexStart := 0
+	quoteFound := false
+	typeofQuoteFound := ""
+	for len(input) > indexStart {
+		i1 := strings.Index(input[indexStart+1:], `"`)
+		i2 := strings.Index(input[indexStart+1:], `'`)
+		i3 := strings.Index(input[indexStart+1:], "`")
+		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
+			inputLength := len(input)
+			input = strings.Replace(input, `{}`, `new Function('return this;')()`, -1)
 
-	//	for len(input) > indexStart {
-	//		i1 := strings.Index(input[indexStart+1:], `"`)
-	//		i2 := strings.Index(input[indexStart+1:], `'`)
-	//		i3 := strings.Index(input[indexStart+1:], "'")
+			if i3 >= 0 && (i3 < i2 && i3 < i1) {
+				typeofQuoteFound = "`"
+				indexStart = i3
+			} else if i2 >= 0 && (i2 < i3 && i2 < i1) {
+				typeofQuoteFound = "`"
+				indexStart = i2
+			} else if i1 >= 0 && (i1 < i2 && i1 < i3) {
+				typeofQuoteFound = "`"
+				indexStart = i1
+			}
+			indexStart = indexStart + (len(input) - inputLength)
+			quoteFound = true
+		} else if quoteFound && (i1 >= 0 && typeofQuoteFound == `"`) {
+			quoteFound = false
+		} else if quoteFound && (i2 >= 0 && typeofQuoteFound == `'`) {
+			quoteFound = false
+		} else if quoteFound && (i3 >= 0 && typeofQuoteFound == "`") {
+			inputLength := len(input)
+			b, _ := json.Marshal(`"` + input[indexStart+1:i3] + `"`)
+			input = input[:indexStart] + string(b) + input[i3+1:]
 
-	//	}
+			indexStart = indexStart + (len(input) - inputLength)
+			quoteFound = false
+		} else {
+			indexStart = len(input)
+			break
+		}
+	}
+
+	fmt.Println(indexStart)
+	input = strings.Replace(input, `{}`, `new Function('return this;')()`, -1)
 
 	e := duk.PevalString(input)
 	dv := dukValue{}
