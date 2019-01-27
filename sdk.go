@@ -1370,7 +1370,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 			output = flushOutput(v, returnOutput)
 			preCachedString[origOttoNum] = ""
 		} else if (strings.Contains(path+"\n", ".template\n")) || (strings.Contains(path+"\n", ".routine\n") && isConcurrent) {
-			fmt.Println(path)
+
 			//wg.Add(1)
 			rBytes, _ := ioutil.ReadFile(path)
 			r := string(rBytes)
