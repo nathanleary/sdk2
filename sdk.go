@@ -36,12 +36,11 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	e := duk.PevalString(input)
 	dv := dukValue{}
 
-	fmt.Println(input)
 	if e == nil {
-
-		dv.value = duk.GetContext(-1)
-		dv.kind = dv.value.GetType(-1)
-		fmt.Println(dv.value.ToString(-1))
+		if duk.GetTop() > 0 {
+			dv.value = duk.GetContext(-1)
+			dv.kind = dv.value.GetType(-1)
+		}
 		return dv, nil
 	} else {
 		return dv, e
