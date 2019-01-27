@@ -113,7 +113,7 @@ func vmSetStringVar(ctx *duktape.Context, name string, variable string) {
 
 	b, e := json.Marshal(variable)
 	if e == nil {
-		ctx.PevalString("var " + name + " = " + `JSON.parse("` + string(b) + `");`)
+		ctx.PevalString("var " + name + " = " + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 	}
 
 }
@@ -1931,7 +1931,7 @@ func loadOtto(num int) {
 
 			b, _ := json.Marshal(s)
 
-			c.PevalString(`JSON.parse("` + string(b) + `");`)
+			c.PevalString(`JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 
 			return 1
 
@@ -1973,7 +1973,7 @@ func loadOtto(num int) {
 
 			b, _ := json.Marshal(s)
 
-			c.PevalString(`JSON.parse("` + string(b) + `");`)
+			c.PevalString(`JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 
 			return 1
 
@@ -2094,7 +2094,7 @@ func loadOtto(num int) {
 
 	//	vm.Set("url", u)
 
-	vm.PevalString(`url = new Function('return this;')();`)
+	vm.PevalString(`var url = new Function('return this;')();`)
 	vm.PushGlobalGoFunction("URLResolveReference", func(c *duktape.Context) int {
 		if c.GetTop() > 1 {
 			base := c.GetString(0)
@@ -2109,15 +2109,15 @@ func loadOtto(num int) {
 
 	vm.PevalString(`url['resolveReference']  = URLResolveReference;`)
 	//	o := makeObject()
-	vm.PevalString(`os = new Function('return this;')();`)
+	vm.PevalString(`var os = new Function('return this;')();`)
 	b, _ := json.Marshal(os.Args)
-	vm.PevalString(`os['Args'] = ` + `JSON.parse("` + string(b) + `");`)
+	vm.PevalString(`os['Args'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 	b, _ = json.Marshal(os.PathSeparator)
-	vm.PevalString(`os['PathSeparator'] = ` + `JSON.parse("` + string(b) + `");`)
+	vm.PevalString(`os['PathSeparator'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 	b, _ = json.Marshal(os.PathListSeparator)
-	vm.PevalString(`os['PathListSeparator'] = ` + `JSON.parse("` + string(b) + `");`)
+	vm.PevalString(`os['PathListSeparator'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 	b, _ = json.Marshal(noscriptargs)
-	vm.PevalString(`os['Params'] = ` + `JSON.parse("` + string(b) + `");`)
+	vm.PevalString(`os['Params'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
 
 	//	vm.PevalString(`goquery = ` + `new Function('return this;')();`)
 
