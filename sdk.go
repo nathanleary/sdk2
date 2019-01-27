@@ -1744,9 +1744,10 @@ func loadOtto(num int) {
 			__FILE__ = temp__FILE__
 			__DIR__ = temp__DIR__
 
+			c.PushString(string(b))
+
 			vmSetStringVar(vm, "__DIR__", __DIR__)
 			vmSetStringVar(vm, "__FILE__", __FILE__)
-			c.PushString(string(b))
 			return 1
 
 		}
@@ -1770,9 +1771,11 @@ func loadOtto(num int) {
 			__FILE__ = temp__FILE__
 			__DIR__ = temp__DIR__
 
+			c.PushString(string(b))
+
 			vmSetStringVar(vm, "__DIR__", __DIR__)
 			vmSetStringVar(vm, "__FILE__", __FILE__)
-			c.PushString(string(b))
+
 			return 1
 		}
 		return 0
