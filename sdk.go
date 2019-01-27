@@ -37,7 +37,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	dv := dukValue{}
 
 	if e == nil {
-		if duk.GetTop() > 0 {
+		if !duk.IsUndefined(-1) {
 			dv.value = duk.GetContext(-1)
 			dv.kind = dv.value.GetType(-1)
 		}
