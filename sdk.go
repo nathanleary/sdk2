@@ -37,8 +37,6 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 	if e == nil {
 		if !duk.IsUndefined(-1) {
-			fmt.Println(duk.ToString(-1))
-			fmt.Println(duk.GetString(-1))
 			dv.value = duk
 		}
 		return dv, nil
