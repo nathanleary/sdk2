@@ -28,7 +28,6 @@ import (
 )
 
 type dukValue struct {
-	kind  duktape.Type
 	value *duktape.Context
 }
 
@@ -39,7 +38,6 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	if e == nil {
 		if !duk.IsUndefined(-1) {
 			dv.value = duk.GetContext(-1)
-			dv.kind = dv.value.GetType(-1)
 		}
 		return dv, nil
 	} else {
