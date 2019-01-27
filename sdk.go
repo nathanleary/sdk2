@@ -2094,7 +2094,7 @@ func loadOtto(num int) {
 
 	//	vm.Set("url", u)
 
-	vm.PevalString(`url = {};`)
+	vm.PevalString(`url = new Function('return this;')();`)
 	vm.PushGlobalGoFunction("URLResolveReference", func(c *duktape.Context) int {
 		if c.GetTop() > 1 {
 			base := c.GetString(0)
@@ -2109,7 +2109,7 @@ func loadOtto(num int) {
 
 	vm.PevalString(`url['resolveReference']  = URLResolveReference;`)
 	//	o := makeObject()
-	vm.PevalString(`os = {};`)
+	vm.PevalString(`os = new Function('return this;')();`)
 	b, _ := json.Marshal(os.Args)
 	vm.PevalString(`os['Args'] = ` + string(b))
 	b, _ = json.Marshal(os.PathSeparator)
@@ -2119,7 +2119,7 @@ func loadOtto(num int) {
 	b, _ = json.Marshal(noscriptargs)
 	vm.PevalString(`os['Params'] = ` + string(b))
 
-	//	vm.PevalString(`goquery = ` + `{};`)
+	//	vm.PevalString(`goquery = ` + `new Function('return this;')();`)
 
 	//	gq["NewDocumentFromString"] = func(s string) *goquery.Document {
 	//		html := bytes.NewBufferString(s)
