@@ -35,6 +35,8 @@ type dukValue struct {
 func Run(duk *duktape.Context, input string) (dukValue, error) {
 	e := duk.PevalString(input)
 	dv := dukValue{}
+
+	fmt.Println(input)
 	if e == nil {
 
 		dv.value = duk.GetContext(-1)
