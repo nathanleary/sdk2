@@ -1830,7 +1830,7 @@ func loadOtto(num int) {
 	vm := globalvm[num]
 
 	vm.PushGlobalGoFunction("set_timeout", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			maxExecutionTime = time.Millisecond * time.Duration(c.GetNumber(0))
 		}
 		return 0
@@ -1840,7 +1840,7 @@ func loadOtto(num int) {
 	//	})
 
 	vm.PushGlobalGoFunction("flush", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			output := c.GetString(0)
 			v := new(cacheVal)
 			v.val = output
@@ -1852,7 +1852,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("file_exists", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 			tempDir, _ := os.Getwd()
 			os.Chdir(__DIR__)
@@ -1868,7 +1868,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("require", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 			//	vm.Set("require", func(path string) string {
 			tempDir, _ := os.Getwd()
@@ -1891,14 +1891,14 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("CacheSize", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			cacheMBSize = c.GetNumber(0)
 		}
 		return 0
 	})
 	//	vm.Set("surf", sf)
 	vm.PushGlobalGoFunction("ReadFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 			tempDir, _ := os.Getwd()
 
@@ -1924,7 +1924,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("ReadTextFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 
 			tempDir, _ := os.Getwd()
@@ -1956,7 +1956,7 @@ func loadOtto(num int) {
 	//	vmSet("bytes", bts)
 
 	vm.PushGlobalGoFunction("Sleep", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 
 			time.Sleep(time.Millisecond * time.Duration(c.GetNumber(0)))
 		}
@@ -1964,7 +1964,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("ReadGlobal", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			key := c.GetString(0)
 			mutex.RLock()
 			ok := false
@@ -1981,7 +1981,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("ReadGlobalOnChange", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 1 {
+		if c.GetTopIndex() >= 1 {
 			key := c.GetString(0)
 			timeout := int(c.GetNumber(1))
 
@@ -2040,7 +2040,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("DeleteGlobal", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			key := c.GetString(0)
 
 			//if !tempForceDevMode {
@@ -2054,7 +2054,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("WriteGlobal", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 1 {
+		if c.GetTopIndex() >= 1 {
 			key := c.GetString(0)
 			data := c.GetString(1)
 
@@ -2074,7 +2074,7 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("DownloadFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 1 {
+		if c.GetTopIndex() >= 1 {
 			url := c.GetString(0)
 			path := c.GetString(1)
 
@@ -2113,7 +2113,7 @@ func loadOtto(num int) {
 	vmSetStringVar(vm, "__DIR__", __DIR__)
 	vmSetStringVar(vm, "__FILE__", __FILE__)
 	vm.PushGlobalGoFunction("ListFiles", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 
 			s := []string{}
@@ -2156,7 +2156,7 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("ListDirectories", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 
 			s := []string{}
@@ -2248,7 +2248,7 @@ func loadOtto(num int) {
 	//	})
 
 	vm.PushGlobalGoFunction("WriteTextFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 2 {
+		if c.GetTopIndex() >= 2 {
 			path := c.GetString(0)
 			str := c.GetString(1)
 			perm := uint32(c.GetNumber(2))
@@ -2275,7 +2275,7 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("DeleteFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 			c.PushString(fmt.Sprint(os.Remove(path)))
 			return 1
@@ -2284,7 +2284,7 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("DeleteFolder", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 0 {
+		if c.GetTopIndex() >= 0 {
 			path := c.GetString(0)
 			c.PushString(fmt.Sprint(os.RemoveAll(path)))
 			return 1
@@ -2296,7 +2296,7 @@ func loadOtto(num int) {
 	//		return []byte(s)
 	//	})
 	//vm.PushGlobalGoFunction("b2s", func(c *duktape.Context) int {
-	//		if c.GetTopIndex() > 0 {
+	//		if c.GetTopIndex() >=0 {
 	//			path := c.GetString(0)
 	//	vm.Set("b2s", func(b []byte) string {
 
@@ -2311,7 +2311,7 @@ func loadOtto(num int) {
 
 	vm.PevalString(`var url = new Function('return this;')();`)
 	vm.PushGlobalGoFunction("URLResolveReference", func(c *duktape.Context) int {
-		if c.GetTopIndex() > 1 {
+		if c.GetTopIndex() >= 1 {
 			base := c.GetString(0)
 			ref := c.GetString(1)
 			u, _ := url.Parse(base)
