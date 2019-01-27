@@ -1277,7 +1277,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 
 						val, _ := Run(vm, r)
 						//						fmt.Println(wg.Count())
-						if !val.value.IsUndefined(-1) {
+						if val.value.GetTop() > 0 && !val.value.IsUndefined(-1) {
 							cacheOutput("js-file"+abs, val.value.GetString(-1), vmnum)
 
 							v := new(cacheVal)
