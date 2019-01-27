@@ -113,7 +113,7 @@ func vmSetStringVar(ctx *duktape.Context, name string, variable string) {
 
 	b, e := json.Marshal(variable)
 	if e == nil {
-		ctx.PevalString("var " + name + " = " + string(b))
+		ctx.PevalString("var " + name + " = " + `JSON.parse("`string(b)+`");`)
 	}
 
 }
@@ -1931,7 +1931,7 @@ func loadOtto(num int) {
 
 			b, _ := json.Marshal(s)
 
-			c.PevalString(string(b))
+			c.PevalString(`JSON.parse("`string(b)+`");`)
 
 			return 1
 
@@ -1973,7 +1973,7 @@ func loadOtto(num int) {
 
 			b, _ := json.Marshal(s)
 
-			c.PevalString(string(b))
+			c.PevalString(`JSON.parse("`string(b)+`");`)
 
 			return 1
 
@@ -2111,13 +2111,13 @@ func loadOtto(num int) {
 	//	o := makeObject()
 	vm.PevalString(`os = new Function('return this;')();`)
 	b, _ := json.Marshal(os.Args)
-	vm.PevalString(`os['Args'] = ` + string(b))
+	vm.PevalString(`os['Args'] = ` + `JSON.parse("`string(b)+`");`)
 	b, _ = json.Marshal(os.PathSeparator)
-	vm.PevalString(`os['PathSeparator'] = ` + string(b))
+	vm.PevalString(`os['PathSeparator'] = ` + `JSON.parse("`string(b)+`");`)
 	b, _ = json.Marshal(os.PathListSeparator)
-	vm.PevalString(`os['PathListSeparator'] = ` + string(b))
+	vm.PevalString(`os['PathListSeparator'] = ` + `JSON.parse("`string(b)+`");`)
 	b, _ = json.Marshal(noscriptargs)
-	vm.PevalString(`os['Params'] = ` + string(b))
+	vm.PevalString(`os['Params'] = ` + `JSON.parse("`string(b)+`");`)
 
 	//	vm.PevalString(`goquery = ` + `new Function('return this;')();`)
 
