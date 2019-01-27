@@ -32,13 +32,23 @@ type dukValue struct {
 }
 
 func Run(duk *duktape.Context, input string) (dukValue, error) {
+
+	//	indexStart := 0
+
+	//	for len(input) > indexStart {
+	//		i1 := strings.Index(input[indexStart+1:], `"`)
+	//		i2 := strings.Index(input[indexStart+1:], `'`)
+	//		i3 := strings.Index(input[indexStart+1:], "'")
+
+	//	}
+
 	e := duk.PevalString(input)
 	dv := dukValue{}
 
 	if e == nil {
-		if !duk.IsUndefined(-1) {
-			dv.value = duk
-		}
+
+		dv.value = duk
+
 		return dv, nil
 	} else {
 		return dv, e
@@ -1277,7 +1287,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 
 						val, _ := Run(vm, r)
 						//						fmt.Println(wg.Count())
-						if val.value.GetTop() > 0 && !val.value.IsUndefined(-1) {
+						if !val.value.IsUndefined(-1) {
 							cacheOutput("js-file"+abs, val.value.GetString(-1), vmnum)
 
 							v := new(cacheVal)
