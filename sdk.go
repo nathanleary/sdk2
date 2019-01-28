@@ -129,6 +129,77 @@ func findType(Interface interface{}) string {
 
 }
 
+func getLastMSI(c *duktape.Context) interface{} {
+	x := c.GetTopIndex()
+	var msi interface{}
+	if x >= 0 {
+
+		//wg := sync.WaitGroup{}
+
+		//wg.Add(c.GetTopIndex() - 1)
+
+		//go func(x int) {
+		//	defer wg.Done()
+
+		if c.GetType(x).IsNumber() {
+			msi[x] = c.ToNumber(x)
+		} else if c.GetType(x).IsString() {
+			msi[x] = c.ToString(x)
+		} else if c.GetType(x).IsBool() {
+			msi[x] = c.ToBoolean(x)
+		} else if c.GetType(x).IsUndefined() {
+			msi[x] = nil
+		} else if c.GetType(x).IsObject() {
+
+			c.Enum(x, (1 << 4))
+
+			arg := x
+			msi[arg] = make(map[string]interface{})
+
+			for c.Next(int(-1) /*enum_idx*/, true) {
+				/* [ ... enum key ] */
+
+				if c.GetType(-1).IsLightFunc() {
+
+				} else if !c.GetType(-1).IsObject() {
+					//c.PushObject()
+
+					msi[arg].(map[string]interface{})[c.SafeToString(-2)] = makeSubDukMSI(c)
+
+					//					msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.get
+
+					if c.GetType(-1).IsNumber() {
+						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.ToNumber(-1)
+					} else if c.GetType(-1).IsString() {
+						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.ToString(-1)
+					} else if c.GetType(-1).IsBool() {
+						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.ToBoolean(-1)
+					} else if c.GetType(-1).IsUndefined() {
+						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = nil
+					}
+
+					//c.Next(-1 /*enum_idx*/, true)
+					c.Pop2() /* pop_key */
+
+				} else {
+					//c.Pop2() /* pop_key */
+				}
+
+			}
+
+			c.Pop()
+
+		}
+		//}(x)
+
+		//wg.Wait()
+		return msi
+	} else {
+		return msi
+	}
+	return msi
+}
+
 func makeDukMSI(c *duktape.Context) []interface{} {
 
 	if c.GetTopIndex() >= 0 {
