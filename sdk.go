@@ -286,7 +286,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i3]); pass {
 
-					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i3+1:]
+					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i3+1:]
 				}
 
 				typeofQuoteFound = "`"
@@ -294,7 +294,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 			} else if i2 >= 0 && (i2 < i3 && i2 < i1) {
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i2]); pass {
 
-					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
+					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
 				}
 
 				typeofQuoteFound = "'"
@@ -303,7 +303,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i1]); pass {
 
-					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
+					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
 				}
 
 				typeofQuoteFound = `"`
