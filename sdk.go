@@ -276,7 +276,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	quoteFound := false
 	typeofQuoteFound := ""
 	for len(input) > indexStart {
-		fmt.Println(input[indexStart+1:])
+		fmt.Println(input[indexStart:])
 		i1 := strings.Index(input[indexStart:], `"`)
 		i2 := strings.Index(input[indexStart:], `'`)
 		i3 := strings.Index(input[indexStart:], "`")
