@@ -272,7 +272,7 @@ func makeDukMSI(c *duktape.Context) []interface{} {
 
 func Run(duk *duktape.Context, input string) (dukValue, error) {
 
-	indexStart := -1
+	indexStart := 0
 	quoteFound := false
 	typeofQuoteFound := ""
 	for len(input) > indexStart {
