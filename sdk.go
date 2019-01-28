@@ -277,9 +277,9 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	typeofQuoteFound := ""
 	for len(input) > indexStart {
 		fmt.Println(input[indexStart+1:])
-		i1 := strings.Index(input[indexStart+1:], `"`)
-		i2 := strings.Index(input[indexStart+1:], `'`)
-		i3 := strings.Index(input[indexStart+1:], "`")
+		i1 := strings.Index(input[indexStart:], `"`)
+		i2 := strings.Index(input[indexStart:], `'`)
+		i3 := strings.Index(input[indexStart:], "`")
 		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
 			inputLength := len(input)
 			r, _ := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
