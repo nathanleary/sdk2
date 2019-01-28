@@ -601,7 +601,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], lastVariableKey)
 
-				lastVariableKey = val.value.GetString(-1)
+				lastVariableKey = val.value.ToString(-1)
 				objectText = lastVariableKey
 				subjectText = lastVariableKey
 
@@ -690,7 +690,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.GetString(-1)
+				subjectText = val.value.ToString(-1)
 
 			}
 
@@ -784,7 +784,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.GetString(-1)
+				subjectText = val.value.ToString(-1)
 
 			}
 
@@ -869,7 +869,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.GetString(-1)
+				subjectText = val.value.ToString(-1)
 
 			}
 
@@ -956,7 +956,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.GetString(-1)
+				subjectText = val.value.ToString(-1)
 
 			}
 
@@ -1042,7 +1042,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.GetString(-1)
+				subjectText = val.value.ToString(-1)
 
 			}
 
@@ -1126,7 +1126,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.GetString(-1)
+				subjectText = val.value.ToString(-1)
 
 			}
 
@@ -1330,10 +1330,10 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
 					if replaceGlobal {
 						val, _ := Run(globalvm[ottoNum], glob[lastVariableKey])
-						glob[lastVariableKey] = val.value.GetString(-1)
+						glob[lastVariableKey] = val.value.ToString(-1)
 					} else {
 						val, _ := Run(globalvm[ottoNum], variables[lastVariableKey])
-						variables[lastVariableKey] = val.value.GetString(-1)
+						variables[lastVariableKey] = val.value.ToString(-1)
 					}
 
 				}
@@ -1474,7 +1474,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 					val, _ := Run(vm, string(r))
 					if val.value.GetTopIndex() >= 0 {
 						v := new(cacheVal)
-						v.val = preCachedString[origOttoNum] + val.value.GetString(-1)
+						v.val = preCachedString[origOttoNum] + val.value.ToString(-1)
 						output = flushOutput(v, returnOutput)
 						preCachedString[origOttoNum] = ""
 					}
@@ -1488,17 +1488,17 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 						val, _ := Run(vm, r)
 
 						if val.value.GetTopIndex() >= 0 {
-							cacheOutput("js-file"+abs, val.value.GetString(-1), vmnum)
+							cacheOutput("js-file"+abs, val.value.ToString(-1), vmnum)
 
 							v := new(cacheVal)
-							v.val = preCachedString[origOttoNum] + val.value.GetString(-1)
+							v.val = preCachedString[origOttoNum] + val.value.ToString(-1)
 							output = flushOutput(v, returnOutput)
 							preCachedString[origOttoNum] = ""
 						} else {
 							cacheOutput("js-file"+abs, "", vmnum)
 
 							v := new(cacheVal)
-							v.val = preCachedString[origOttoNum] + val.value.GetString(-1)
+							v.val = preCachedString[origOttoNum] + val.value.ToString(-1)
 							output = flushOutput(v, returnOutput)
 							preCachedString[origOttoNum] = ""
 						}
