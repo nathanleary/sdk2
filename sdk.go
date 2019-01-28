@@ -1892,7 +1892,7 @@ func loadOtto(num int) {
 
 		return 0
 	})
-	vm.PushGlobalGoFunction("CacheSize", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("cacheSize", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			cacheMBSize = setFloat(msi[0], 0.0)
@@ -1900,7 +1900,7 @@ func loadOtto(num int) {
 		return 0
 	})
 	//	vm.Set("surf", sf)
-	vm.PushGlobalGoFunction("ReadFile", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("readFile", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			path := setString(msi[0], "")
@@ -1927,7 +1927,7 @@ func loadOtto(num int) {
 
 		return 0
 	})
-	vm.PushGlobalGoFunction("ReadTextFile", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("readTextFile", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			path := setString(msi[0], "")
@@ -1960,7 +1960,7 @@ func loadOtto(num int) {
 
 	//	vmSet("bytes", bts)
 
-	vm.PushGlobalGoFunction("Sleep", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("sleep", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 
@@ -1987,7 +1987,7 @@ func loadOtto(num int) {
 		}
 		return 0
 	})
-	vm.PushGlobalGoFunction("ReadGlobalOnChange", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("readGlobalOnChange", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 1 {
 			key := setString(msi[0], "")
@@ -2047,7 +2047,7 @@ func loadOtto(num int) {
 
 		return 0
 	})
-	vm.PushGlobalGoFunction("DeleteGlobal", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("deleteGlobal", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			key := setString(msi[0], "")
@@ -2062,7 +2062,7 @@ func loadOtto(num int) {
 		}
 		return 0
 	})
-	vm.PushGlobalGoFunction("WriteGlobal", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("writeGlobal", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 1 {
 			key := setString(msi[0], "")
@@ -2083,7 +2083,7 @@ func loadOtto(num int) {
 
 	})
 
-	vm.PushGlobalGoFunction("DownloadFile", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("downloadFile", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 1 {
 			url := setString(msi[0], "")
@@ -2123,7 +2123,7 @@ func loadOtto(num int) {
 	})
 	vmSetStringVar(vm, "__DIR__", __DIR__)
 	vmSetStringVar(vm, "__FILE__", __FILE__)
-	vm.PushGlobalGoFunction("ListFiles", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("listFiles", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			path := setString(msi[0], "")
@@ -2167,7 +2167,7 @@ func loadOtto(num int) {
 		return 0
 	})
 
-	vm.PushGlobalGoFunction("ListDirectories", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("listDirectories", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			path := setString(msi[0], "")
@@ -2260,7 +2260,7 @@ func loadOtto(num int) {
 
 	//	})
 
-	vm.PushGlobalGoFunction("WriteTextFile", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("writeTextFile", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 2 {
 			path := setString(msi[0], "")
@@ -2288,7 +2288,7 @@ func loadOtto(num int) {
 		return 0
 	})
 
-	vm.PushGlobalGoFunction("DeleteFile", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("deleteFile", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			path := setString(msi[0], "")
@@ -2326,7 +2326,7 @@ func loadOtto(num int) {
 	//	vm.Set("url", u)
 
 	vm.PevalString(`var url = new Function('return this;')();`)
-	vm.PushGlobalGoFunction("URLResolveReference", func(c *duktape.Context) int {
+	vm.PushGlobalGoFunction("urlResolveReference", func(c *duktape.Context) int {
 		msi := makeDukMSI(c)
 		if len(msi) > 1 {
 			base := setString(msi[0], "")
