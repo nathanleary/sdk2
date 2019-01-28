@@ -142,19 +142,18 @@ func getLastMSI(c *duktape.Context) interface{} {
 		//	defer wg.Done()
 
 		if c.GetType(x).IsNumber() {
-			msi[x] = c.ToNumber(x)
+			msi = c.ToNumber(x)
 		} else if c.GetType(x).IsString() {
-			msi[x] = c.ToString(x)
+			msi = c.ToString(x)
 		} else if c.GetType(x).IsBool() {
-			msi[x] = c.ToBoolean(x)
+			msi = c.ToBoolean(x)
 		} else if c.GetType(x).IsUndefined() {
-			msi[x] = nil
+			msi = nil
 		} else if c.GetType(x).IsObject() {
 
 			c.Enum(x, (1 << 4))
 
-			arg := x
-			msi[arg] = make(map[string]interface{})
+			msi = make(map[string]interface{})
 
 			for c.Next(int(-1) /*enum_idx*/, true) {
 				/* [ ... enum key ] */
@@ -164,18 +163,18 @@ func getLastMSI(c *duktape.Context) interface{} {
 				} else if !c.GetType(-1).IsObject() {
 					//c.PushObject()
 
-					msi[arg].(map[string]interface{})[c.SafeToString(-2)] = makeSubDukMSI(c)
+					msi.(map[string]interface{})[c.SafeToString(-2)] = makeSubDukMSI(c)
 
 					//					msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.get
 
 					if c.GetType(-1).IsNumber() {
-						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.ToNumber(-1)
+						msi.(map[string]interface{})[c.SafeToString(-2)] = c.ToNumber(-1)
 					} else if c.GetType(-1).IsString() {
-						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.ToString(-1)
+						msi.(map[string]interface{})[c.SafeToString(-2)] = c.ToString(-1)
 					} else if c.GetType(-1).IsBool() {
-						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = c.ToBoolean(-1)
+						msi.(map[string]interface{})[c.SafeToString(-2)] = c.ToBoolean(-1)
 					} else if c.GetType(-1).IsUndefined() {
-						msi[arg].(map[string]interface{})[c.SafeToString(-2)] = nil
+						msi.(map[string]interface{})[c.SafeToString(-2)] = nil
 					}
 
 					//c.Next(-1 /*enum_idx*/, true)
@@ -672,7 +671,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], lastVariableKey)
 
-				lastVariableKey = val.value.ToString(-1)
+				lastVariableKey = setString(getLastMSI(val.value), "")
 				objectText = lastVariableKey
 				subjectText = lastVariableKey
 
@@ -761,7 +760,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.ToString(-1)
+				subjectText = setString(getLastMSI(val.value), "")
 
 			}
 
@@ -855,7 +854,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.ToString(-1)
+				subjectText = setString(getLastMSI(val.value), "")
 
 			}
 
@@ -940,7 +939,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.ToString(-1)
+				subjectText = setString(getLastMSI(val.value), "")
 
 			}
 
@@ -1027,7 +1026,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.ToString(-1)
+				subjectText = setString(getLastMSI(val.value), "")
 
 			}
 
@@ -1113,7 +1112,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.ToString(-1)
+				subjectText = setString(getLastMSI(val.value), "")
 
 			}
 
@@ -1197,7 +1196,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
-				subjectText = val.value.ToString(-1)
+				subjectText = setString(getLastMSI(val.value), "")
 
 			}
 
@@ -1401,10 +1400,10 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
 					if replaceGlobal {
 						val, _ := Run(globalvm[ottoNum], glob[lastVariableKey])
-						glob[lastVariableKey] = val.value.ToString(-1)
+						glob[lastVariableKey] = setString(getLastMSI(val.value), "")
 					} else {
 						val, _ := Run(globalvm[ottoNum], variables[lastVariableKey])
-						variables[lastVariableKey] = val.value.ToString(-1)
+						variables[lastVariableKey] = setString(getLastMSI(val.value), "")
 					}
 
 				}
@@ -1545,7 +1544,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 					val, _ := Run(vm, string(r))
 					if val.value.GetTopIndex() >= 0 {
 						v := new(cacheVal)
-						v.val = preCachedString[origOttoNum] + val.value.ToString(-1)
+						v.val = preCachedString[origOttoNum] + setString(getLastMSI(val.value), "")
 						output = flushOutput(v, returnOutput)
 						preCachedString[origOttoNum] = ""
 					}
@@ -1559,17 +1558,17 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 						val, _ := Run(vm, r)
 
 						if val.value.GetTopIndex() >= 0 {
-							cacheOutput("js-file"+abs, val.value.ToString(-1), vmnum)
+							cacheOutput("js-file"+abs, setString(getLastMSI(val.value), ""), vmnum)
 
 							v := new(cacheVal)
-							v.val = preCachedString[origOttoNum] + val.value.ToString(-1)
+							v.val = preCachedString[origOttoNum] + setString(getLastMSI(val.value), "")
 							output = flushOutput(v, returnOutput)
 							preCachedString[origOttoNum] = ""
 						} else {
 							cacheOutput("js-file"+abs, "", vmnum)
 
 							v := new(cacheVal)
-							v.val = preCachedString[origOttoNum] + val.value.ToString(-1)
+							v.val = preCachedString[origOttoNum] + setString(getLastMSI(val.value), "")
 							output = flushOutput(v, returnOutput)
 							preCachedString[origOttoNum] = ""
 						}
