@@ -332,7 +332,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 		}
 	}
 
-	input = strings.Replace(input, `{}`, `new Function('return this;')()`, -1)
+	fmt.Println(input)
 
 	e := duk.PevalString(input)
 	dv := dukValue{}
