@@ -1990,7 +1990,7 @@ func loadOtto(num int) {
 		msi := makeDukMSI(c)
 		if len(msi) > 0 {
 			path := setString(msi[0], "")
-			fmt.Println(path)
+
 			tempDir, _ := os.Getwd()
 
 			os.Chdir(__DIR__)
