@@ -546,21 +546,6 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 			if strings.Contains(statement, "set") || strings.Contains(statement, "replace") || strings.Contains(statement, "change") {
 
 				lastVariableKey = paths[x]
-			} else if pass2, _ := regexpMatchString("*global*", statement); pass2 {
-
-				subjectText = ""
-				if ans, ok := glob[paths[x]]; ok {
-					subjectText = ans
-					lastVariableKey = subjectText
-					objectText = subjectText
-
-				} else {
-					subjectText = ""
-					lastVariableKey = subjectText
-					objectText = subjectText
-
-				}
-
 			} else if pass2, _ := regexpMatchString("*arg*", statement); pass2 {
 
 				subjectText = ""
@@ -679,6 +664,21 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 				}
 
+			} else if pass2, _ := regexpMatchString("*global*", statement); pass2 {
+
+				subjectText = ""
+				if ans, ok := glob[paths[x]]; ok {
+					subjectText = ans
+					lastVariableKey = subjectText
+					objectText = subjectText
+
+				} else {
+					subjectText = ""
+					lastVariableKey = subjectText
+					objectText = subjectText
+
+				}
+
 			} else {
 				objectText = paths[x]
 				subjectText = paths[x]
@@ -693,6 +693,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				objectText = lastVariableKey
 				subjectText = lastVariableKey
 
+			}
+
+			if pass, _ := regexpMatchString(`*write\sglobal*|*write\sto\sglobal*|*change\sglobal*`, statement); pass {
+				glob[paths[x]] = subjectText
+				globalChanged = true
 			}
 
 		} else if pass, _ := regexpMatchString((`*unset*|*remove*|*delete*|*clear*`), statement); pass {
