@@ -276,14 +276,14 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	quoteFound := false
 	typeofQuoteFound := ""
 	for len(input) > indexStart {
-		fmt.Println(input[indexStart:])
+
 		i1 := strings.Index(input[indexStart:], `"`)
 		i2 := strings.Index(input[indexStart:], `'`)
 		i3 := strings.Index(input[indexStart:], "`")
 		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
 			inputLength := len(input)
 			r, _ := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
-			if i3 >= 0 && (i3 < i2 && i3 < i1) {
+			if i3 >= 0 && (i3 < i2 && i3 < i1) || i3 >= 0 && i2 == -1 && i1 == -1 {
 
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i3]); pass {
 
@@ -292,7 +292,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 				typeofQuoteFound = "`"
 				indexStart = i3 + (len(input) - inputLength)
-			} else if i2 >= 0 && (i2 < i3 && i2 < i1) {
+			} else if i2 >= 0 && (i2 < i3 && i2 < i1) || i2 >= 0 && i1 == -1 && i3 == -1 {
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i2]); pass {
 
 					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
@@ -300,7 +300,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 				typeofQuoteFound = "'"
 				indexStart = i2 + (len(input) - inputLength)
-			} else if i1 >= 0 && (i1 < i2 && i1 < i3) {
+			} else if i1 >= 0 && (i1 < i2 && i1 < i3) || i1 >= 0 && i2 == -1 && i3 == -1 {
 
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i1]); pass {
 
