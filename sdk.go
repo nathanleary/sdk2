@@ -281,6 +281,9 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 		i2 := strings.Index(input[indexStart:], `'`)
 		i3 := strings.Index(input[indexStart:], "`")
 		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
+
+			fmt.Println(i1, i2, i3)
+
 			inputLength := len(input)
 			r, _ := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
 			if i3 >= 0 && (i3 < i2 && i3 < i1) || i3 >= 0 && i2 == -1 && i1 == -1 {
@@ -321,7 +324,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 			inputLength := len(input)
 			b, _ := json.Marshal(input[indexStart+1 : i3])
 			input = input[:indexStart] + string(b) + input[i3+1:]
-			fmt.Println(input)
+
 			indexStart = indexStart + (len(input) - inputLength)
 			quoteFound = false
 		} else {
