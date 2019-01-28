@@ -272,65 +272,65 @@ func makeDukMSI(c *duktape.Context) []interface{} {
 
 func Run(duk *duktape.Context, input string) (dukValue, error) {
 
-	indexStart := 0
-	quoteFound := false
-	typeofQuoteFound := ""
-	for len(input) > indexStart {
+	//	indexStart := 0
+	//	quoteFound := false
+	//	typeofQuoteFound := ""
+	//	for len(input) > indexStart {
 
-		i1 := strings.Index(input[indexStart:], `"`)
-		i2 := strings.Index(input[indexStart:], `'`)
-		i3 := strings.Index(input[indexStart:], "`")
-		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
+	//		i1 := strings.Index(input[indexStart:], `"`)
+	//		i2 := strings.Index(input[indexStart:], `'`)
+	//		i3 := strings.Index(input[indexStart:], "`")
+	//		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
 
-			inputLength := len(input)
-			r, _ := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
-			if i3 >= 0 && ((i3 < i2 || i2 == -1) && (i3 < i1 || i1 == -1)) || i3 >= 0 && i2 == -1 && i1 == -1 {
+	//			inputLength := len(input)
+	//			r, _ := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
+	//			if i3 >= 0 && ((i3 < i2 || i2 == -1) && (i3 < i1 || i1 == -1)) || i3 >= 0 && i2 == -1 && i1 == -1 {
 
-				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i3]); pass {
+	//				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i3]); pass {
 
-					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i3+1:]
-				}
+	//					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i3+1:]
+	//				}
 
-				typeofQuoteFound = "`"
-				indexStart = i3 + (len(input) - inputLength)
-			} else if i2 >= 0 && ((i2 < i3 || i3 == -1) && (i2 < i1 || i1 == -1)) || i2 >= 0 && i1 == -1 && i3 == -1 {
-				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i2]); pass {
+	//				typeofQuoteFound = "`"
+	//				indexStart = i3 + (len(input) - inputLength)
+	//			} else if i2 >= 0 && ((i2 < i3 || i3 == -1) && (i2 < i1 || i1 == -1)) || i2 >= 0 && i1 == -1 && i3 == -1 {
+	//				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:+i2]); pass {
 
-					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
-				}
+	//					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
+	//				}
 
-				typeofQuoteFound = "'"
-				indexStart = i2 + (len(input) - inputLength)
-			} else if i1 >= 0 && ((i1 < i2 || i2 == -1) && (i3 < i2 || i2 == -1)) || i1 >= 0 && i2 == -1 && i3 == -1 {
+	//				typeofQuoteFound = "'"
+	//				indexStart = i2 + (len(input) - inputLength)
+	//			} else if i1 >= 0 && ((i1 < i2 || i2 == -1) && (i3 < i2 || i2 == -1)) || i1 >= 0 && i2 == -1 && i3 == -1 {
 
-				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i1]); pass {
+	//				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i1]); pass {
 
-					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
-				}
+	//					input = input[:indexStart] + r.ReplaceAllString(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
+	//				}
 
-				typeofQuoteFound = `"`
-				indexStart = i1 + (len(input) - inputLength)
-			}
+	//				typeofQuoteFound = `"`
+	//				indexStart = i1 + (len(input) - inputLength)
+	//			}
 
-			quoteFound = true
-		} else if quoteFound && (i1 >= 0 && typeofQuoteFound == `"`) {
-			quoteFound = false
-		} else if quoteFound && (i2 >= 0 && typeofQuoteFound == `'`) {
-			quoteFound = false
-		} else if quoteFound && (i3 >= 0 && typeofQuoteFound == "`") {
+	//			quoteFound = true
+	//		} else if quoteFound && (i1 >= 0 && typeofQuoteFound == `"`) {
+	//			quoteFound = false
+	//		} else if quoteFound && (i2 >= 0 && typeofQuoteFound == `'`) {
+	//			quoteFound = false
+	//		} else if quoteFound && (i3 >= 0 && typeofQuoteFound == "`") {
 
-			inputLength := len(input)
-			b, _ := json.Marshal(input[indexStart+1 : i3])
-			input = input[:indexStart] + string(b) + input[i3+1:]
+	//			inputLength := len(input)
+	//			b, _ := json.Marshal(input[indexStart+1 : i3])
+	//			input = input[:indexStart] + string(b) + input[i3+1:]
 
-			indexStart = indexStart + (len(input) - inputLength)
-			quoteFound = false
-		} else {
-			indexStart = len(input)
-			break
-		}
+	//			indexStart = indexStart + (len(input) - inputLength)
+	//			quoteFound = false
+	//		} else {
+	//			indexStart = len(input)
+	//			break
+	//		}
 
-	}
+	//	}
 
 	e := duk.PevalString(input)
 	dv := dukValue{}
