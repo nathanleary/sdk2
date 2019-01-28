@@ -131,7 +131,6 @@ func findType(Interface interface{}) string {
 
 func makeDukMSI(c *duktape.Context) []interface{} {
 
-	msi := makeDukMSI(c)
 	if len(msi) > 0 {
 		msi := make([]interface{}, c.GetTopIndex()+1)
 		//wg := sync.WaitGroup{}
