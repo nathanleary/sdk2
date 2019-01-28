@@ -318,18 +318,17 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 		} else if quoteFound && (i3 >= 0 && typeofQuoteFound == "`") {
 
 			inputLength := len(input)
-			b, _ := json.Marshal(`"` + input[indexStart+1:i3] + `"`)
+			b, _ := json.Marshal(input[indexStart+1 : i3])
 			input = input[:indexStart] + string(b) + input[i3+1:]
-
+			fmt.Println(input)
 			indexStart = indexStart + (len(input) - inputLength)
 			quoteFound = false
 		} else {
 			indexStart = len(input)
 			break
 		}
-	}
 
-	fmt.Println(input)
+	}
 
 	e := duk.PevalString(input)
 	dv := dukValue{}
