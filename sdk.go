@@ -1241,19 +1241,8 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					}
 
 				}
-				if pass2, _ := regexpMatchString("*global*", statement); pass2 {
-					subjectText = ""
-					objectText = paths[x]
-					if ans, ok := glob[lastVariableKey]; ok {
-						if replaceGlobal {
-							glob[lastVariableKey] = ans
-						} else {
-							variables[lastVariableKey] = ans
-						}
 
-					}
-
-				} else if pass2, _ := regexpMatchString("*arg*", statement); pass2 {
+				if pass2, _ := regexpMatchString("*arg*", statement); pass2 {
 
 					for val, ans := range args {
 
@@ -1402,6 +1391,18 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 								}
 							}
+						}
+
+					}
+
+				} else if pass2, _ := regexpMatchString("*global*", statement); pass2 {
+					subjectText = ""
+					objectText = paths[x]
+					if ans, ok := glob[lastVariableKey]; ok {
+						if replaceGlobal {
+							glob[lastVariableKey] = ans
+						} else {
+							variables[lastVariableKey] = ans
 						}
 
 					}
