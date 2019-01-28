@@ -284,24 +284,29 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 			if i3 >= 0 && (i3 < i2 && i3 < i1) {
 
-				if pass, _ := regexpMatchString(`function\s{}`, input[indexStart+1:i3]); !pass {
-					input = input[:indexStart] + strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1) + input[i3+1:]
+				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i3]); pass {
+					r := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
+
+					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i3+1:]
 				}
 
 				typeofQuoteFound = "`"
 				indexStart = i3 + (len(input) - inputLength)
 			} else if i2 >= 0 && (i2 < i3 && i2 < i1) {
+				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i2]); pass {
+					r := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
 
-				if pass, _ := regexpMatchString(`function\s{}`, input[indexStart+1:i2]); !pass {
-					input = input[:indexStart] + strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1) + input[i2+1:]
+					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
 				}
 
 				typeofQuoteFound = "`"
 				indexStart = i2 + (len(input) - inputLength)
 			} else if i1 >= 0 && (i1 < i2 && i1 < i3) {
 
-				if pass, _ := regexpMatchString(`function\s{}`, input[indexStart+1:i1]); !pass {
-					input = input[:indexStart] + strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1) + input[i1+1:]
+				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i1]); pass {
+					r := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
+
+					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
 				}
 
 				typeofQuoteFound = "`"
@@ -487,11 +492,11 @@ func convertRegex(sentence string) string {
 }
 func testIfShouldLiveUpdate(statement string) bool {
 	liveRegex := "*make*live*|*set*live*|*publish*live*|*update*live*"
-	if pass, e := regexpMatchString(`*do*not*make*live*|*don?t*make*live*|do*not*set*live*|don?t*set*live*|don?t*publish*live*|do*not*publish*live*|don?t*update*live*|do*not*update*live*`, (statement)); e == nil && pass {
+	if pass, _ := regexpMatchString(`*do*not*make*live*|*don?t*make*live*|do*not*set*live*|don?t*set*live*|don?t*publish*live*|do*not*publish*live*|don?t*update*live*|do*not*update*live*`, (statement)); pass {
 
 		return false
 
-	} else if pass, e := regexpMatchString(liveRegex, statement); e == nil && pass {
+	} else if pass, _ := regexpMatchString(liveRegex, statement); pass {
 
 		return true
 
@@ -500,10 +505,10 @@ func testIfShouldLiveUpdate(statement string) bool {
 	return isdevmode
 }
 func testIfShouldNOTCache(statement string) (bool, bool) {
-	if pass, e := regexpMatchString(("*do\\snot\\scache*|*don?t\\scache*|*force\\sno\\scache*"), strings.ToLower(statement)); e == nil && pass {
+	if pass, _ := regexpMatchString(("*do\\snot\\scache*|*don?t\\scache*|*force\\sno\\scache*"), strings.ToLower(statement)); pass {
 		return true, false
 
-	} else if pass, e := regexpMatchString(("*do\\scache*|set\\scache*|force\\scache*|*cache*"), strings.ToLower(statement)); e == nil && pass {
+	} else if pass, _ := regexpMatchString(("*do\\scache*|set\\scache*|force\\scache*|*cache*"), strings.ToLower(statement)); pass {
 		return false, true
 
 	}
@@ -529,12 +534,12 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 		statementFound = false
 		statement := strings.ToLower(paths[x-1])
-		if pass, e := regexpMatchString(`*always*|*no\smatter\swhat*|*every\stime*|*if\strue*`, statement); e == nil && pass {
+		if pass, _ := regexpMatchString(`*always*|*no\smatter\swhat*|*every\stime*|*if\strue*`, statement); pass {
 
 			statementFound = false // this is a special case <<<<---
 			returnTrue = true
 
-		} else if pass, e := regexpMatchString((`*else\sif*|*set*|*replace*|*change*|*if*|*write*`), statement); e == nil && pass {
+		} else if pass, _ := regexpMatchString((`*else\sif*|*set*|*replace*|*change*|*if*|*write*`), statement); pass {
 			statementFound = true
 			//			fmt.Println(paths[x])
 			//fmt.Println(statement)
@@ -565,11 +570,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				for val, ans := range args {
 					v := strconv.Itoa(val)
 					if paths[x] == v {
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -631,7 +636,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					}
 				}
 
-			} else if pass, e := regexpMatchString(`*anything*|*any\sthing*|*any-arg*|*arg*|*any-key*|*any\sarg*|*any\skey*`, statement); e == nil && pass {
+			} else if pass, _ := regexpMatchString(`*anything*|*any\sthing*|*any-arg*|*arg*|*any-key*|*any\sarg*|*any\skey*`, statement); pass {
 				subjectText = ""
 				objectText = paths[x]
 				for val, ans := range posts {
@@ -657,11 +662,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 							v := strconv.Itoa(val)
 							if paths[x] == v {
 
-								if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+								if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 									subjectText = filepath.Base(ans)
-								} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+								} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 									subjectText = filepath.Dir(ans)
-								} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+								} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 									subjectText = filepath.Base(filepath.Dir(ans))
 								} else {
 									subjectText = ans
@@ -682,7 +687,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				lastVariableKey = subjectText
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], lastVariableKey)
 
@@ -692,15 +697,15 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 
 			}
 
-		} else if pass, e := regexpMatchString((`*unset*|*remove*|*delete*|*clear*`), statement); e == nil && pass {
+		} else if pass, _ := regexpMatchString((`*unset*|*remove*|*delete*|*clear*`), statement); pass {
 			delete(variables, paths[x])
 			statementFound = true // this is a special case <<<<---
-		} else if pass, e := regexpMatchString(`*else*`, statement); e == nil && pass {
+		} else if pass, _ := regexpMatchString(`*else*`, statement); pass {
 
 			statementFound = false // this is a special case <<<<---
 			returnTrue = !returnTrue
 
-		} else if pass, e := regexpMatchString("*does*not*equal*|*!=*|*<>*|*not*equal*|*doesn?t*equal*", statement); e == nil && pass && objectText != "" {
+		} else if pass, _ := regexpMatchString("*does*not*equal*|*!=*|*<>*|*not*equal*|*doesn?t*equal*", statement); pass && objectText != "" {
 
 			statementFound = true
 
@@ -717,11 +722,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					v := strconv.Itoa(val)
 					if paths[x] == v {
 						objectText = subjectText
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -771,7 +776,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				subjectText = paths[x]
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
@@ -785,7 +790,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				returnTrue = false
 				//return false, x+2, doNotCache, variables
 			}
-		} else if pass, e := regexpMatchString(("*equals*|*=*|*==*"), statement); e == nil && pass && objectText != "" {
+		} else if pass, _ := regexpMatchString(("*equals*|*=*|*==*"), statement); pass && objectText != "" {
 			statementFound = true
 
 			if pass2, _ := regexpMatchString("*global*", statement); pass2 {
@@ -806,11 +811,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					v := strconv.Itoa(val)
 					if paths[x] == v {
 
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -865,7 +870,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				subjectText = paths[x]
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
@@ -880,7 +885,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				//return false, x+2, doNotCache, variables
 			}
 
-		} else if pass, e := regexpMatchString(("*match*not*perfect*|*regex*not*perfect*|*not*match*perfect*|*not*perfect*regex*|*not*perfect*match*|*doesn?t*perfect*match*|*regex*not*complete*|*not*match*complete*|*not*complete*regex*|*not*complete*match*|*doesn?t*complete*match*|*doesn?t*match*perfectly*"), statement); e == nil && pass && objectText != "" {
+		} else if pass, _ := regexpMatchString(("*match*not*perfect*|*regex*not*perfect*|*not*match*perfect*|*not*perfect*regex*|*not*perfect*match*|*doesn?t*perfect*match*|*regex*not*complete*|*not*match*complete*|*not*complete*regex*|*not*complete*match*|*doesn?t*complete*match*|*doesn?t*match*perfectly*"), statement); pass && objectText != "" {
 			//			fmt.Println(statement)
 			statementFound = true
 			if pass2, _ := regexpMatchString("*global*", statement); pass2 {
@@ -896,11 +901,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					v := strconv.Itoa(val)
 					if paths[x] == v {
 						objectText = subjectText
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -950,7 +955,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				subjectText = paths[x]
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
@@ -966,7 +971,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				returnTrue = false
 				//return false, x+2, doNotCache, variables
 			}
-		} else if pass, e := regexpMatchString(("*match*perfect*|*perfect*regex*|*regex*perfect*|*complete*regex*|*regex*complete*|*perfect*match*|*match*complete*|*complete*match*"), statement); e == nil && pass && objectText != "" {
+		} else if pass, _ := regexpMatchString(("*match*perfect*|*perfect*regex*|*regex*perfect*|*complete*regex*|*regex*complete*|*perfect*match*|*match*complete*|*complete*match*"), statement); pass && objectText != "" {
 			statementFound = true
 			if pass2, _ := regexpMatchString("*global*", statement); pass2 {
 				subjectText = ""
@@ -983,11 +988,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					v := strconv.Itoa(val)
 					if paths[x] == v {
 						objectText = subjectText
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -1037,7 +1042,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				subjectText = paths[x]
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
@@ -1053,7 +1058,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				returnTrue = false
 				//return false, x+2, doNotCache, variables
 			}
-		} else if pass, e := regexpMatchString(("*not*regex*|*not*match*"), statement); e == nil && pass && objectText != "" {
+		} else if pass, _ := regexpMatchString(("*not*regex*|*not*match*"), statement); pass && objectText != "" {
 			//			fmt.Println(paths[x])
 			statementFound = true
 			if pass2, _ := regexpMatchString("*global*", statement); pass2 {
@@ -1069,11 +1074,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					v := strconv.Itoa(val)
 					if paths[x] == v {
 						objectText = subjectText
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -1123,7 +1128,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				subjectText = paths[x]
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
@@ -1137,7 +1142,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				returnTrue = false
 				//return false, x+2, doNotCache, variables
 			}
-		} else if pass, e := regexpMatchString(("*match*|*regex*"), statement); e == nil && pass && objectText != "" {
+		} else if pass, _ := regexpMatchString(("*match*|*regex*"), statement); pass && objectText != "" {
 
 			statementFound = true
 			if pass2, _ := regexpMatchString("*global*", statement); pass2 {
@@ -1153,11 +1158,11 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					v := strconv.Itoa(val)
 					if paths[x] == v {
 						objectText = subjectText
-						if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+						if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 							subjectText = filepath.Base(ans)
-						} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 							subjectText = filepath.Dir(ans)
-						} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+						} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 							subjectText = filepath.Base(filepath.Dir(ans))
 						} else {
 							subjectText = ans
@@ -1207,7 +1212,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				subjectText = paths[x]
 			}
 
-			if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+			if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 
 				val, _ := Run(globalvm[ottoNum], subjectText)
 
@@ -1221,7 +1226,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				returnTrue = false
 				//return false, x+2, doNotCache, variables
 			}
-		} else if pass, e := regexpMatchString(("*to*|*with*"), statement); e == nil && pass {
+		} else if pass, _ := regexpMatchString(("*to*|*with*"), statement); pass {
 
 			if lastVariableKey != "" {
 				statementFound = true
@@ -1257,10 +1262,10 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 						v := strconv.Itoa(val)
 
 						if paths[x] == v {
-							if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+							if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 								variables[lastVariableKey] = filepath.Base(ans)
 
-							} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+							} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 
 								if replaceGlobal {
 									glob[lastVariableKey] = filepath.Dir(ans)
@@ -1268,7 +1273,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 									variables[lastVariableKey] = filepath.Dir(ans)
 								}
 
-							} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+							} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 
 								if replaceGlobal {
 									glob[lastVariableKey] = filepath.Base(filepath.Dir(ans))
@@ -1366,21 +1371,21 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 							for val, ans := range args {
 								v := strconv.Itoa(val)
 								if paths[x] == v {
-									if pass, e := regexpMatchString(("*file*name*|*file*"), statement); e == nil && pass {
+									if pass, _ := regexpMatchString(("*file*name*|*file*"), statement); pass {
 										if replaceGlobal {
 											glob[lastVariableKey] = filepath.Base(ans)
 										} else {
 											variables[lastVariableKey] = filepath.Base(ans)
 										}
 
-									} else if pass, e := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); e == nil && pass {
+									} else if pass, _ := regexpMatchString(("*dir*path*|*folder*path*|*parent*path*"), statement); pass {
 
 										if replaceGlobal {
 											glob[lastVariableKey] = filepath.Dir(ans)
 										} else {
 											variables[lastVariableKey] = filepath.Dir(ans)
 										}
-									} else if pass, e := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); e == nil && pass {
+									} else if pass, _ := regexpMatchString(("*dir*name*|*folder*name*|*parent*name*"), statement); pass {
 
 										if replaceGlobal {
 											glob[lastVariableKey] = filepath.Base(filepath.Dir(ans))
@@ -1412,7 +1417,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					}
 				}
 
-				if pass, e := regexpMatchString(`*js*|*eval*|*javascript*`, statement); e == nil && pass {
+				if pass, _ := regexpMatchString(`*js*|*eval*|*javascript*`, statement); pass {
 					if replaceGlobal {
 						val, _ := Run(globalvm[ottoNum], glob[lastVariableKey])
 						glob[lastVariableKey] = setString(getLastMSI(val.value), "")

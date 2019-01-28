@@ -6,10 +6,10 @@ import (
 	"strings"
 )
 
-func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
-
+func regexpMatchString(psudoRegexCode, statement string) (bool, string) {
+	foundStatement := ""
 	if statement == "" {
-		return false, nil
+		return false, ""
 	}
 
 	psudoRegexArray := strings.Split(psudoRegexCode, "|")
@@ -51,24 +51,28 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 				if RegCards[z] == "?" {
 
 					stringInMemory = stringInMemory + tempStatement[:1]
+
 					tempStatement = tempStatement[1:]
 
 					if len(stringInMemory) <= 1 && z+1 == len(RegCards) {
+						foundStatement = foundStatement + tempStatement[:1]
 						//if their is one char OR nothing in the string AND if the last card is a single wildcard then pass the test
-						return true, nil
+						return true, foundStatement
 					}
 
 				} else if RegCards[z] == "*" {
 					//for len(tempStatement) > 0 {
 					stringInMemory = stringInMemory + tempStatement
+
 					tempStatement = ""
 
 					//}
 
 					if z+1 == len(RegCards) {
+						foundStatement = foundStatement + stringInMemory
 						//if their is one char OR nothing in the string OR if the last card is a wildcard then pass the test
 						//fmt.Println(statement, psudoRegexCode)
-						return true, nil
+						return true, foundStatement
 					}
 
 				} else if RegCards[z] == `\s` {
@@ -78,6 +82,7 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 							if tempStatement[:1] != " " && tempStatement[:1] != "\t" && tempStatement[:1] != "\r" && tempStatement[:1] != "\n" {
 								p = false
 							} else {
+								foundStatement = foundStatement + tempStatement[:1]
 								tempStatement = tempStatement[1:]
 							}
 						} else {
@@ -115,6 +120,7 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 							if spacePos == -1 {
 								p = false
 							} else {
+								foundStatement = foundStatement + tempStatement[:spacePos+1]
 								tempStatement = tempStatement[spacePos+1:]
 								stringInMemory = ""
 							}
@@ -142,10 +148,12 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 
 						if pos >= 0 {
 							// if it is in the wildcard string then use that
+							foundStatement = foundStatement + stringInMemory[:pos+1]
 							tempStatement = stringInMemory[pos+1:] + tempStatement
 						} else {
 							//else drop the wildcard  string and find the character
 							pos := strings.Index(tempStatement, specialCard)
+							foundStatement = foundStatement + tempStatement[:pos+1]
 							tempStatement = tempStatement[pos+1:]
 						}
 						stringInMemory = ""
@@ -177,10 +185,12 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 
 						if pos >= 0 {
 							// if it is in the wildcard string then use that
+							foundStatement = foundStatement + stringInMemory[:pos+1]
 							tempStatement = stringInMemory[pos+1:] + tempStatement
 						} else {
 							//else drop the wildcard  string and find the character
 							pos := strings.Index(tempStatement, specialCard)
+							foundStatement = foundStatement + tempStatement[:pos+1]
 							tempStatement = tempStatement[pos+1:]
 						}
 						stringInMemory = ""
@@ -197,7 +207,7 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 			} else if !failedTest {
 				if tempStatement == "" && (z+1 >= len(RegCards) || strings.Replace(strings.Join(RegCards[z+1:], ""), "", "*", -1) == "") {
 
-					return true, nil
+					return true, foundStatement
 				} else {
 
 					failedTest = true
@@ -213,7 +223,7 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 
 			if tempStatement == "" && stringInMemory == "" && (z+1 >= len(RegCards) || strings.Replace(strings.Join(RegCards[z+1:], ""), "", "*", -1) == "") && !failedTest {
 				//fmt.Println(statement, psudoRegexCode)
-				return true, nil
+				return true, foundStatement
 			} else if tempStatement == "" && stringInMemory == "" && (z+1 >= len(RegCards) || strings.Replace(strings.Join(RegCards[z+1:], ""), "", "*", -1) == "") {
 
 				failedTest = true
@@ -225,7 +235,7 @@ func regexpMatchString(psudoRegexCode, statement string) (bool, error) {
 
 	}
 
-	return false, nil
+	return false, ""
 
 }
 
