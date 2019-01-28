@@ -1945,9 +1945,17 @@ func loadOtto(num int) {
 			//	vm.Set("require", func(path string) string {
 			tempDir, _ := os.Getwd()
 
+			temp__DIR__ := __DIR__
+			temp__FILE__ := __FILE__
+
 			os.Chdir(__DIR__)
 			out := readExecute(path, strings.Join(noscriptargs, " "), num, true, num, false, tempNoCache, tempForceCache, tempForceDevMode)
 			os.Chdir(tempDir)
+			__FILE__ = temp__FILE__
+			__DIR__ = temp__DIR__
+
+			vm.Set("__DIR__", __DIR__)
+			vm.Set("__FILE__", __FILE__)
 
 			c.PushString(out)
 
