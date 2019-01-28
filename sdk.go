@@ -1945,18 +1945,12 @@ func loadOtto(num int) {
 			//	vm.Set("require", func(path string) string {
 			tempDir, _ := os.Getwd()
 
-			temp__DIR__ := __DIR__
-			temp__FILE__ := __FILE__
-
 			os.Chdir(__DIR__)
 			out := readExecute(path, strings.Join(noscriptargs, " "), num, true, num, false, tempNoCache, tempForceCache, tempForceDevMode)
 			os.Chdir(tempDir)
-			__FILE__ = temp__FILE__
-			__DIR__ = temp__DIR__
 
-			vmSetStringVar(vm, "__DIR__", __DIR__)
-			vmSetStringVar(vm, "__FILE__", __FILE__)
 			c.PushString(out)
+
 			return 1
 		}
 
@@ -1976,16 +1970,11 @@ func loadOtto(num int) {
 			path := setString(msi[0], "")
 			tempDir, _ := os.Getwd()
 
-			temp__DIR__ := __DIR__
-			temp__FILE__ := __FILE__
-
 			os.Chdir(__DIR__)
 
 			b, _ := ioutil.ReadFile(path)
 
 			os.Chdir(tempDir)
-			__FILE__ = temp__FILE__
-			__DIR__ = temp__DIR__
 
 			c.PushString(string(b))
 
@@ -2004,16 +1993,11 @@ func loadOtto(num int) {
 
 			tempDir, _ := os.Getwd()
 
-			temp__DIR__ := __DIR__
-			temp__FILE__ := __FILE__
-
 			os.Chdir(__DIR__)
 
 			b, _ := ioutil.ReadFile(path)
 
 			os.Chdir(tempDir)
-			__FILE__ = temp__FILE__
-			__DIR__ = temp__DIR__
 
 			c.PushString(string(b))
 
@@ -2339,16 +2323,11 @@ func loadOtto(num int) {
 
 			tempDir, _ := os.Getwd()
 
-			temp__DIR__ := __DIR__
-			temp__FILE__ := __FILE__
-
 			os.Chdir(__DIR__)
 
 			err := fmt.Sprint(ioutil.WriteFile(path, []byte(str), os.FileMode(perm)))
 
 			os.Chdir(tempDir)
-			__FILE__ = temp__FILE__
-			__DIR__ = temp__DIR__
 
 			//			vmSetStringVar(vm, "__DIR__", __DIR__)
 			//			vmSetStringVar(vm, "__FILE__", __FILE__)
