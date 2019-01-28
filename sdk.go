@@ -272,7 +272,7 @@ func makeDukMSI(c *duktape.Context) []interface{} {
 
 func Run(duk *duktape.Context, input string) (dukValue, error) {
 
-	indexStart := 0
+	indexStart := -1
 	quoteFound := false
 	typeofQuoteFound := ""
 	for len(input) > indexStart {
@@ -320,7 +320,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 			inputLength := len(input)
 			b, _ := json.Marshal(input[indexStart+1 : i3])
 			input = input[:indexStart] + string(b) + input[i3+1:]
-			fmt.Println(input)
+			//fmt.Println(input)
 			indexStart = indexStart + (len(input) - inputLength)
 			quoteFound = false
 		} else {
