@@ -281,17 +281,31 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 		i3 := strings.Index(input[indexStart+1:], "`")
 		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
 			inputLength := len(input)
-			input = strings.Replace(input, `{}`, `new Function('return this;')()`, -1)
 
 			if i3 >= 0 && (i3 < i2 && i3 < i1) {
+
+				if pass, _ := regexpMatchString(`function\s{}`, input[indexStart+1:i3]); !pass {
+					input = input[:indexStart] + strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, 1) + input[i3+1:]
+				}
+
 				typeofQuoteFound = "`"
-				indexStart = i3
+				indexStart = i3 + (len(input) - inputLength)
 			} else if i2 >= 0 && (i2 < i3 && i2 < i1) {
+
+				if pass, _ := regexpMatchString(`function\s{}`, input[indexStart+1:i2]); !pass {
+					input = input[:indexStart] + strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, 1) + input[i2+1:]
+				}
+
 				typeofQuoteFound = "`"
-				indexStart = i2
+				indexStart = i2 + (len(input) - inputLength)
 			} else if i1 >= 0 && (i1 < i2 && i1 < i3) {
+
+				if pass, _ := regexpMatchString(`function\s{}`, input[indexStart+1:i1]); !pass {
+					input = input[:indexStart] + strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, 1) + input[i1+1:]
+				}
+
 				typeofQuoteFound = "`"
-				indexStart = i1
+				indexStart = i1 + (len(input) - inputLength)
 			}
 			indexStart = indexStart + (len(input) - inputLength)
 			quoteFound = true
@@ -300,6 +314,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 		} else if quoteFound && (i2 >= 0 && typeofQuoteFound == `'`) {
 			quoteFound = false
 		} else if quoteFound && (i3 >= 0 && typeofQuoteFound == "`") {
+
 			inputLength := len(input)
 			b, _ := json.Marshal(`"` + input[indexStart+1:i3] + `"`)
 			input = input[:indexStart] + string(b) + input[i3+1:]
