@@ -131,7 +131,8 @@ func findType(Interface interface{}) string {
 
 func makeDukMSI(c *duktape.Context) []interface{} {
 
-	if c.GetTopIndex() >= 0 {
+	msi := makeDukMSI(c)
+	if len(msi) > 0 {
 		msi := make([]interface{}, c.GetTopIndex()+1)
 		//wg := sync.WaitGroup{}
 
@@ -1830,8 +1831,9 @@ func loadOtto(num int) {
 	vm := globalvm[num]
 
 	vm.PushGlobalGoFunction("set_timeout", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			maxExecutionTime = time.Millisecond * time.Duration(c.GetNumber(0))
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			maxExecutionTime = time.Millisecond * time.Duration(setFloat(msi[0], 0.0))
 		}
 		return 0
 	})
@@ -1840,8 +1842,9 @@ func loadOtto(num int) {
 	//	})
 
 	vm.PushGlobalGoFunction("flush", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			output := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			output := setString(msi[0], "")
 			v := new(cacheVal)
 			v.val = output
 			preCachedString[num] = preCachedString[num] + output
@@ -1852,8 +1855,9 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("file_exists", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 			tempDir, _ := os.Getwd()
 			os.Chdir(__DIR__)
 			if _, err := os.Stat(path); !os.IsNotExist(err) {
@@ -1868,8 +1872,9 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("require", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 			//	vm.Set("require", func(path string) string {
 			tempDir, _ := os.Getwd()
 
@@ -1891,15 +1896,17 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("CacheSize", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			cacheMBSize = c.GetNumber(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			cacheMBSize = setFloat(msi[0], 0.0)
 		}
 		return 0
 	})
 	//	vm.Set("surf", sf)
 	vm.PushGlobalGoFunction("ReadFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 			tempDir, _ := os.Getwd()
 
 			temp__DIR__ := __DIR__
@@ -1924,8 +1931,9 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("ReadTextFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 
 			tempDir, _ := os.Getwd()
 
@@ -1956,16 +1964,18 @@ func loadOtto(num int) {
 	//	vmSet("bytes", bts)
 
 	vm.PushGlobalGoFunction("Sleep", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
 
-			time.Sleep(time.Millisecond * time.Duration(c.GetNumber(0)))
+			time.Sleep(time.Millisecond * time.Duration(setFloat(msi[0], 0.0)))
 		}
 
 		return 0
 	})
 	vm.PushGlobalGoFunction("ReadGlobal", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			key := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			key := setString(msi[0], "")
 			mutex.RLock()
 			ok := false
 			for !ok {
@@ -1981,9 +1991,10 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("ReadGlobalOnChange", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 1 {
-			key := c.GetString(0)
-			timeout := int(c.GetNumber(1))
+		msi := makeDukMSI(c)
+		if len(msi) > 1 {
+			key := setString(msi[0], "")
+			timeout := int(setFloat(msi[1], 0.0))
 
 			mutex.RLock()
 			ok := false
@@ -2040,8 +2051,9 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("DeleteGlobal", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			key := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			key := setString(msi[0], "")
 
 			//if !tempForceDevMode {
 			globalChanged = true
@@ -2054,9 +2066,10 @@ func loadOtto(num int) {
 		return 0
 	})
 	vm.PushGlobalGoFunction("WriteGlobal", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 1 {
-			key := c.GetString(0)
-			data := c.GetString(1)
+		msi := makeDukMSI(c)
+		if len(msi) > 1 {
+			key := setString(msi[0], "")
+			data := setString(msi[1], "")
 
 			//if !tempForceDevMode {
 			globalChanged = true
@@ -2074,9 +2087,10 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("DownloadFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 1 {
-			url := c.GetString(0)
-			path := c.GetString(1)
+		msi := makeDukMSI(c)
+		if len(msi) > 1 {
+			url := setString(msi[0], "")
+			path := setString(msi[1], "")
 
 			// don't worry about errors
 			response, e := http.Get(url)
@@ -2113,8 +2127,9 @@ func loadOtto(num int) {
 	vmSetStringVar(vm, "__DIR__", __DIR__)
 	vmSetStringVar(vm, "__FILE__", __FILE__)
 	vm.PushGlobalGoFunction("ListFiles", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 
 			s := []string{}
 			files, err := ioutil.ReadDir(path)
@@ -2156,8 +2171,9 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("ListDirectories", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 
 			s := []string{}
 			files, err := ioutil.ReadDir(path)
@@ -2248,10 +2264,11 @@ func loadOtto(num int) {
 	//	})
 
 	vm.PushGlobalGoFunction("WriteTextFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 2 {
-			path := c.GetString(0)
-			str := c.GetString(1)
-			perm := uint32(c.GetNumber(2))
+		msi := makeDukMSI(c)
+		if len(msi) > 2 {
+			path := setString(msi[0], "")
+			str := setString(msi[1], "")
+			perm := uint32(setFloat(msi[2], 0.0))
 
 			tempDir, _ := os.Getwd()
 
@@ -2266,8 +2283,8 @@ func loadOtto(num int) {
 			__FILE__ = temp__FILE__
 			__DIR__ = temp__DIR__
 
-			vmSetStringVar(vm, "__DIR__", __DIR__)
-			vmSetStringVar(vm, "__FILE__", __FILE__)
+			//			vmSetStringVar(vm, "__DIR__", __DIR__)
+			//			vmSetStringVar(vm, "__FILE__", __FILE__)
 			c.PushString(fmt.Sprint(err))
 			return 1
 		}
@@ -2275,8 +2292,9 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("DeleteFile", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 			c.PushString(fmt.Sprint(os.Remove(path)))
 			return 1
 		}
@@ -2284,8 +2302,9 @@ func loadOtto(num int) {
 	})
 
 	vm.PushGlobalGoFunction("DeleteFolder", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 0 {
-			path := c.GetString(0)
+		msi := makeDukMSI(c)
+		if len(msi) > 0 {
+			path := setString(msi[0], "")
 			c.PushString(fmt.Sprint(os.RemoveAll(path)))
 			return 1
 		}
@@ -2297,7 +2316,7 @@ func loadOtto(num int) {
 	//	})
 	//vm.PushGlobalGoFunction("b2s", func(c *duktape.Context) int {
 	//		if c.GetTopIndex() >=0 {
-	//			path := c.GetString(0)
+	//			path := setString(msi[0], "")
 	//	vm.Set("b2s", func(b []byte) string {
 
 	//		return fmt.Sprint(b)
@@ -2311,9 +2330,10 @@ func loadOtto(num int) {
 
 	vm.PevalString(`var url = new Function('return this;')();`)
 	vm.PushGlobalGoFunction("URLResolveReference", func(c *duktape.Context) int {
-		if c.GetTopIndex() >= 1 {
-			base := c.GetString(0)
-			ref := c.GetString(1)
+		msi := makeDukMSI(c)
+		if len(msi) > 1 {
+			base := setString(msi[0], "")
+			ref := setString(msi[1], "")
 			u, _ := url.Parse(base)
 			u2, _ := url.Parse(ref)
 			c.PushString(u.ResolveReference(u2).String())
