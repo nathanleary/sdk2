@@ -411,7 +411,7 @@ func vmSetStringVar(ctx *duktape.Context, name string, variable string) {
 
 	b, e := json.Marshal(variable)
 	if e == nil {
-		ctx.PevalString("var " + name + " = " + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+		ctx.PevalString("var " + name + " = " + `JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 	}
 
 }
@@ -2238,7 +2238,7 @@ func loadOtto(num int) {
 
 			b, _ := json.Marshal(s)
 
-			c.PevalString(`JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+			c.PevalString(`JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 
 			return 1
 
@@ -2281,7 +2281,7 @@ func loadOtto(num int) {
 
 			b, _ := json.Marshal(s)
 
-			c.PevalString(`JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+			c.PevalString(`JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 
 			return 1
 
@@ -2418,13 +2418,13 @@ func loadOtto(num int) {
 	//	o := makeObject()
 	vm.PevalString(`var os = new Function('return this;')();`)
 	b, _ := json.Marshal(os.Args)
-	vm.PevalString(`os['Args'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+	vm.PevalString(`os['Args'] = ` + `JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 	b, _ = json.Marshal(os.PathSeparator)
-	vm.PevalString(`os['PathSeparator'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+	vm.PevalString(`os['PathSeparator'] = ` + `JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 	b, _ = json.Marshal(os.PathListSeparator)
-	vm.PevalString(`os['PathListSeparator'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+	vm.PevalString(`os['PathListSeparator'] = ` + `JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 	b, _ = json.Marshal(noscriptargs)
-	vm.PevalString(`os['Params'] = ` + `JSON.parse("` + strings.Replace(string(b), `"`, `\"`, -1) + `");`)
+	vm.PevalString(`os['Params'] = ` + `JSON.parse("` + strings.Replace(strings.Replace(string(b), `\`, `\\`, -1), `"`, `\"`, -1) + `");`)
 
 	//	vm.PevalString(`goquery = ` + `new Function('return this;')();`)
 
