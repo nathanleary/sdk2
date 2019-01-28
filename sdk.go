@@ -1954,8 +1954,8 @@ func loadOtto(num int) {
 			__FILE__ = temp__FILE__
 			__DIR__ = temp__DIR__
 
-			vm.Set("__DIR__", __DIR__)
-			vm.Set("__FILE__", __FILE__)
+			vmSetStringVar(vm, "__DIR__", __DIR__)
+			vmSetStringVar(vm, "__FILE__", __FILE__)
 
 			c.PushString(out)
 
