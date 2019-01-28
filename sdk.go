@@ -247,10 +247,8 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 
 	e := duk.PevalString(input)
 	dv := dukValue{}
-
+	dv.value = duk
 	if e == nil {
-
-		dv.value = duk
 
 		return dv, nil
 	} else {
