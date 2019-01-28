@@ -276,6 +276,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 	quoteFound := false
 	typeofQuoteFound := ""
 	for len(input) > indexStart {
+		fmt.Println(input[indexStart+1:])
 		i1 := strings.Index(input[indexStart+1:], `"`)
 		i2 := strings.Index(input[indexStart+1:], `'`)
 		i3 := strings.Index(input[indexStart+1:], "`")
@@ -320,7 +321,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 			inputLength := len(input)
 			b, _ := json.Marshal(input[indexStart+1 : i3])
 			input = input[:indexStart] + string(b) + input[i3+1:]
-			fmt.Println(input)
+
 			indexStart = indexStart + (len(input) - inputLength)
 			quoteFound = false
 		} else {
