@@ -281,11 +281,10 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 		i3 := strings.Index(input[indexStart+1:], "`")
 		if !quoteFound && (i1 >= 0 || i2 >= 0 || i3 >= 0) {
 			inputLength := len(input)
-
+			r, _ := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
 			if i3 >= 0 && (i3 < i2 && i3 < i1) {
 
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i3]); pass {
-					r := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
 
 					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i3], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i3+1:]
 				}
@@ -294,7 +293,6 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 				indexStart = i3 + (len(input) - inputLength)
 			} else if i2 >= 0 && (i2 < i3 && i2 < i1) {
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i2]); pass {
-					r := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
 
 					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
 				}
@@ -304,7 +302,6 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 			} else if i1 >= 0 && (i1 < i2 && i1 < i3) {
 
 				if pass, _ := regexpMatchString(`*{}`, input[indexStart+1:i1]); pass {
-					r := regexp.Compile(`\)\s*new Function\('return this;'\)\(\)`)
 
 					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
 				}
