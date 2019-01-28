@@ -299,7 +299,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i2], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i2+1:]
 				}
 
-				typeofQuoteFound = "`"
+				typeofQuoteFound = "'"
 				indexStart = i2 + (len(input) - inputLength)
 			} else if i1 >= 0 && (i1 < i2 && i1 < i3) {
 
@@ -309,7 +309,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 					input = input[:indexStart] + r.ReplaceAll(strings.Replace(input[indexStart+1:i1], `{}`, `new Function('return this;')()`, -1), `) {}`) + input[i1+1:]
 				}
 
-				typeofQuoteFound = "`"
+				typeofQuoteFound = `"`
 				indexStart = i1 + (len(input) - inputLength)
 			}
 			indexStart = indexStart + (len(input) - inputLength)
