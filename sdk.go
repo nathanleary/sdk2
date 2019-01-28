@@ -310,7 +310,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 				typeofQuoteFound = `"`
 				indexStart = i1 + (len(input) - inputLength)
 			}
-			indexStart = indexStart + (len(input) - inputLength)
+
 			quoteFound = true
 		} else if quoteFound && (i1 >= 0 && typeofQuoteFound == `"`) {
 			quoteFound = false
@@ -321,7 +321,7 @@ func Run(duk *duktape.Context, input string) (dukValue, error) {
 			inputLength := len(input)
 			b, _ := json.Marshal(input[indexStart+1 : i3])
 			input = input[:indexStart] + string(b) + input[i3+1:]
-
+			fmt.Println(input)
 			indexStart = indexStart + (len(input) - inputLength)
 			quoteFound = false
 		} else {
