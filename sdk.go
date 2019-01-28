@@ -1235,8 +1235,9 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 					if pass2, _ := regexpMatchString("*set*|*change*|*replace*", paths[x-3]); pass2 {
 
 						if pass2, _ := regexpMatchString("*global*", paths[x-3]); pass2 {
-							replaceGlobal = true
-
+							if pass3, _ := regexpMatchString("*global\svalue*|*value\sfrom\sglobal*", paths[x-3]); !pass3 {
+								replaceGlobal = true
+							}
 						}
 					}
 
