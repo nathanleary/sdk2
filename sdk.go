@@ -485,10 +485,10 @@ func testIfShouldLiveUpdate(statement string) bool {
 	return isdevmode
 }
 func testIfShouldNOTCache(statement string) (bool, bool) {
-	if pass, e := regexpMatchString(("*do\snot\scache*|*don?t\scache*|*force\sno\scache*"), strings.ToLower(statement)); e == nil && pass {
+	if pass, e := regexpMatchString(("*do\\snot\\scache*|*don?t\\scache*|*force\\sno\\scache*"), strings.ToLower(statement)); e == nil && pass {
 		return true, false
 
-	} else if pass, e := regexpMatchString(("*do\scache*|set\scache*|force\scache*|*cache*"), strings.ToLower(statement)); e == nil && pass {
+	} else if pass, e := regexpMatchString(("*do\\scache*|set\\scache*|force\\scache*|*cache*"), strings.ToLower(statement)); e == nil && pass {
 		return false, true
 
 	}
