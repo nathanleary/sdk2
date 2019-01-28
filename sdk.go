@@ -537,7 +537,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 			statementFound = false // this is a special case <<<<---
 			returnTrue = true
 
-		} else if pass, _ := regexpMatchString((`*else\sif*|*set*|*replace*|*change*|*if*|*write*`), statement); pass {
+		} else if pass, _ := regexpMatchString((`*else\sif*|*set*|*replace*|*change*|*if*`), statement); pass {
 			statementFound = true
 			//			fmt.Println(paths[x])
 			//fmt.Println(statement)
@@ -693,11 +693,6 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				objectText = lastVariableKey
 				subjectText = lastVariableKey
 
-			}
-
-			if pass, _ := regexpMatchString(`*write\sglobal*|*write\sto\sglobal*|*change\sglobal*`, statement); pass {
-				glob[paths[x]] = subjectText
-				globalChanged = true
 			}
 
 		} else if pass, _ := regexpMatchString((`*unset*|*remove*|*delete*|*clear*`), statement); pass {
@@ -1229,7 +1224,7 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 				returnTrue = false
 				//return false, x+2, doNotCache, variables
 			}
-		} else if pass, _ := regexpMatchString(("*to*|*with*"), statement); pass {
+		} else if pass, _ := regexpMatchString(("*to*|*with*|*as*"), statement); pass {
 
 			if lastVariableKey != "" {
 				statementFound = true
