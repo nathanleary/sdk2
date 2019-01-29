@@ -1463,7 +1463,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 
 	//fmt.Println(tempForceDevMode)
 	tempStoretempNoCache := tempNoCache
-	tempNoCache = setNoCache
+	//	tempNoCache = setNoCache
 
 	tempStoretempForceCache := tempForceCache
 	tempForceCache = setForceCache
