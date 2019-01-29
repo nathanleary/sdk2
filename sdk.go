@@ -2573,7 +2573,7 @@ func main() {
 	go func() {
 
 		defer w.Done()
-		b, e := ioutil.ReadFile(filepath.Dir(os.Args[0]) + "/" + "cache.gob")
+		b, e := ioutil.ReadFile(filepath.Dir(os.Args[0]) + "/" + fingerprint("") + "_cache.gob")
 
 		if e == nil {
 			decodeCache(b)
