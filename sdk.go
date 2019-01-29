@@ -351,12 +351,12 @@ var globalChanged bool = false
 var cacheMBSize float64 = 20.0
 var isdevmode bool = false
 var forceCache bool = false
-var noCache bool = true
+var noCache bool = false
 var globalvm []*duktape.Context = make([]*duktape.Context, 0)
 var mutex sync.RWMutex
 var maxExecutionTime time.Duration
 var singletonTrigger bool = false
-var tempNoCache bool = true
+var tempNoCache bool = false
 var tempForceCache bool = false
 var tempForceDevMode bool = false
 
