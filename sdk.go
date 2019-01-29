@@ -1788,7 +1788,7 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 	defer wg.Done()
 	tempForceCache = tempStoretempForceCache
 	tempForceDevMode = tempStoretempForceDevMode
-	tempNoCache = tempStoretempNoCache
+	//tempNoCache = tempStoretempNoCache
 	return output
 }
 
