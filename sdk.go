@@ -2718,7 +2718,7 @@ func main() {
 		ioutil.WriteFile(filepath.Dir(os.Args[0])+"/"+"globals.gob", encodeGlobal(), 0777)
 	}
 	if cacheChanged {
-		ioutil.WriteFile(filepath.Dir(os.Args[0])+"/"+"cache.gob", encodeCache(), 0777)
+		ioutil.WriteFile(filepath.Dir(os.Args[0])+"/"+fingerprint("")+"_cache.gob", encodeCache(), 0777)
 	}
 
 	time.Sleep(time.Millisecond)
