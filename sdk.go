@@ -1460,12 +1460,14 @@ func testRequest(x int, paths []string, args []string, gets map[string]string, p
 func readExecute(path string, argsString string, vmnum int, returnOutput bool, origOttoNum int, isConcurrent bool, setNoCache bool, setForceCache bool, forceLiveMode bool) string {
 	tempStoretempForceDevMode := tempForceDevMode
 	tempForceDevMode = forceLiveMode
+
 	//fmt.Println(tempForceDevMode)
 	tempStoretempNoCache := tempNoCache
 	tempNoCache = setNoCache
 
 	tempStoretempForceCache := tempForceCache
 	tempForceCache = setForceCache
+
 	if isConcurrent {
 		defer wg.Done()
 	}
@@ -1740,13 +1742,9 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 					absPath, _ := filepath.Abs(path)
 					os.Chdir(filepath.Dir(absPath))
 					todoNoCache, forceCache := testIfShouldNOTCache(paths[x-1])
-					tempForceCache = tempStoretempForceCache
-					tempForceDevMode = tempStoretempForceDevMode
-					tempNoCache = tempStoretempNoCache
+
 					readExecute(paths[x], argsString, vmnum, returnOutput, origOttoNum, isConcurrent, todoNoCache, forceCache, testIfShouldLiveUpdate(paths[x-1]))
-					tempStoretempNoCache = tempNoCache
-					tempStoretempForceDevMode = tempForceDevMode
-					tempStoretempForceCache = tempForceCache
+
 					os.Chdir(cwd)
 
 				}
@@ -1788,9 +1786,9 @@ func readExecute(path string, argsString string, vmnum int, returnOutput bool, o
 
 	wTemp.Wait()
 	defer wg.Done()
-	tempStoretempNoCache = tempNoCache
-	tempStoretempForceDevMode = tempForceDevMode
-	tempStoretempForceCache = tempForceCache
+	tempForceCache = tempStoretempForceCache
+	tempForceDevMode = tempStoretempForceDevMode
+	tempNoCache = tempStoretempNoCache
 	return output
 }
 
